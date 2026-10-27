@@ -1,42 +1,33 @@
-import hashlib
-import json
-import os
-from typing import Dict
+def check_student_access(student_id):
+            students = {
+                            1001: "active",
+                            1002: "inactive",
+                            1003: "active"
+            }
 
-class StudentAuth:
-        def __init__(self, db_file="students.json"):
-                    self.db_file = db_file
-                    self.students = self._load_data()
+    status = students.get(student_id)
 
-        def _load_data(self):
-                    if os.path.exists(self.db_file):
-                                    try:
-                                                        with open(self.db_file, "r", encoding="utf-8") as f:
-                                                                                return json.load(f)
-                                                                        except:
-                                                        return {}
-                                return {}
+    if status is None:
+                    return {
+                                        "student_id": student_id,
+                                        "access": False,
+                                        "message": "\u0421\u0442\u0443\u0434\u0435\u043d\u0442 \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d"
+                    }
 
-    def _save_data(self):
-                with open(self.db_file, "w", encoding="utf-8") as f:
-                                json.dump(self.students, f, indent=4)
+    if status == "active":
+                    return {
+                                        "student_id": student_id,
+                                        "access": True,
+                                        "message": "\u0414\u043e\u0441\u0442\u0443\u043f \u0440\u0430\u0437\u0440\u0435\u0448\u0451\u043d"
+                    }
 
-    def _hash_password(self, password):
-                return hashlib.sha256(password.encode("utf-8")).hexdigest()
+    return {
+                    "student_id": student_id,
+                    "access": False,
+                    "message": "\u0421\u0442\u0430\u0442\u0443\u0441 \u0441\u0442\u0443\u0434\u0435\u043d\u0442\u0430 \u043d\u0435\u0430\u043a\u0442\u0438\u0432\u0435\u043d"
+    }
 
-    def register(self, username, password):
-                if username in self.students:
-                                return False
-                            self.students[username] = self._hash_password(password)
-        self._save_data()
-        return True
-
-    def authenticate(self, username, password):
-                if username not in self.students:
-                                return False
-                            return self.students[username] == self._hash_password(password)
-
-if __name__ == "__main__":
-        auth = StudentAuth()
-    auth.register("korgan", "password123")
-    print(auth.authenticate("korgan", "password123"))
+# \u041f\u0440\u0438\u043c\u0435\u0440\u044b \u043f\u0440\u043e\u0432\u0435\u0440\u043a\u0438
+print(check_student_access(1001))
+print(check_student_access(1002))
+print(check_student_access(9999))
